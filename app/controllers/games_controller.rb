@@ -3,6 +3,7 @@
 # Controller for Game
 class GamesController < ApplicationController
   before_action :permitted_params, only: [:create]
+
   def create
     game = Game.new(permitted_params)
     if game.validate
@@ -21,6 +22,11 @@ class GamesController < ApplicationController
   private
 
   def permitted_params
-    params.require(:games).permit(:game_type, :rounds, :chance_per_round)
+    params.require(:games).permit(:game_type,
+                                  :rounds,
+                                  :chance_per_round,
+                                  teams_attributes: [
+                                    :name
+                                  ])
   end
 end

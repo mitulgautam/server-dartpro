@@ -3,6 +3,8 @@
 # Model for GameTeam with validations
 class Team < ApplicationRecord
   belongs_to :game
+  has_many :team_players
 
   validates_presence_of :name, message: 'must be present of the team.'
+  accepts_nested_attributes_for :team_players
 end

@@ -19,6 +19,11 @@ class GamesController < ApplicationController
     render
   end
 
+  def show
+    @game = Game.find_by(id: params[:id])
+    render
+  end
+
   private
 
   def permitted_params

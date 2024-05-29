@@ -5,7 +5,6 @@ class GamesController < ApplicationController
   before_action :permitted_params, only: [:create]
 
   def create
-    # debugger
     game = Game.new(permitted_params)
     if game.validate
       game.save
@@ -26,11 +25,11 @@ class GamesController < ApplicationController
     params.require(:game).permit(:game_type,
                                  :rounds,
                                  :chance_per_round,
-                                 { teams_attributes: [
+                                 teams_attributes: [
                                    :name,
-                                   { team_players_attributes: %i[
-                                     player_id
+                                   { team_players_attributes: [
+                                     :player_id
                                    ] }
-                                 ] })
+                                 ])
   end
 end

@@ -4,6 +4,7 @@
 json.message 'List of all Games'
 json.games @games do |game|
   json.extract! game, :id, :game_type, :rounds, :chance_per_round, :top_scorer_score, :created_at
+  json.xname "#{game&.teams&.first&.name} Vs #{game&.teams&.second&.name}"
   json.teams game.teams do |team|
     json.extract! team, :id, :name, :score, :is_winner
     json.players team.team_players do |player|

@@ -21,7 +21,11 @@ class GamesController < ApplicationController
 
   def show
     @game = Game.find_by(id: params[:id])
-    render
+    if @game.present?
+      render
+    else
+      render json: { message: "Unable to find with id #{params[:id]}", data: nil }, status: :unprocessable_entity
+    end
   end
 
   private
@@ -32,8 +36,8 @@ class GamesController < ApplicationController
                                  :chance_per_round,
                                  teams_attributes: [
                                    :name,
-                                   { team_players_attributes: [
-                                     :player_id
+                                   { team_players_attributes: %i[
+                                     player_id is_captain
                                    ] }
                                  ])
   end

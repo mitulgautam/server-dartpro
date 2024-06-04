@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_29_160710) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_04_170212) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -78,6 +78,29 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_29_160710) do
     t.index ["game_id"], name: "index_teams_on_game_id"
   end
 
+  create_table "turn_orders", force: :cascade do |t|
+    t.bigint "game_id", null: false
+    t.bigint "team_player_id", null: false
+    t.integer "turn_order"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "team_player_id", "turn_order"], name: "index_turn_orders_on_game_id_and_team_player_id_and_turn_order", unique: true
+    t.index ["game_id"], name: "index_turn_orders_on_game_id"
+    t.index ["team_player_id"], name: "index_turn_orders_on_team_player_id"
+  end
+
+  create_table "turn_trackers", force: :cascade do |t|
+    t.bigint "game_id", null: false
+    t.integer "current_player_id"
+    t.integer "next_player_id"
+    t.integer "current_team_id"
+    t.integer "next_team_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_turn_trackers_on_game_id"
+    t.index ["id", "game_id"], name: "index_turn_trackers_on_id_and_game_id", unique: true
+  end
+
   add_foreign_key "chances", "rounds"
   add_foreign_key "chances", "team_players"
   add_foreign_key "rounds", "games"
@@ -86,4 +109,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_29_160710) do
   add_foreign_key "team_players", "players"
   add_foreign_key "team_players", "teams"
   add_foreign_key "teams", "games"
+  add_foreign_key "turn_orders", "games"
+  add_foreign_key "turn_orders", "team_players"
+  add_foreign_key "turn_trackers", "games"
 end

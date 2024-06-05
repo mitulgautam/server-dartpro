@@ -7,3 +7,4 @@ json.xname "#{@game&.teams&.first&.name} Vs #{@game&.teams&.second&.name}"
 json.teams @game.teams do |team|
   json.extract! team, :id, :name, :score, :is_winner
 end
+json.extract! @turn_tracker, :current_player_id, :current_team_id

@@ -22,6 +22,7 @@ class GamesController < ApplicationController
   def show
     @game = Game.find_by(id: params[:id])
     if @game.present?
+      @turn_tracker = TurnTracker.find_by(game_id: @game.id)
       render
     else
       render json: { message: "Unable to find with id #{params[:id]}", data: nil }, status: :unprocessable_entity

@@ -9,24 +9,31 @@ class Game < ApplicationRecord
 
   accepts_nested_attributes_for :teams
 
-  after_create :create_game_rounds
+  after_create :create_turn_orders
+  after_create :create_turn_tracker
 
-  def create_game_rounds
+  def create_turn_orders
+    # TURN ORDER CREATE
     teams.each do |team|
-      team.team_players.each do |player|
-        (1..rounds).each do |i|
-          round = Round.new
-          round.score = 0
-          round.current_round = i
-          round.game_id = id
-          round.team_id = team.id
-          round.team_player_id = player.id
-          (1..chance_per_round).each do
-            round.chances.build(score: 0, team_player_id: player.id)
-          end
-          round.save if round.validate
-        end
+      team&.team_players&.order(id: :asc)&.each_with_index do |player, idx|
+        turn = TurnOrder.new
+        turn.game_id = id
+        turn.team_id = player.team_id
+        turn.team_player_id = player.id
+        turn.turn_order = idx + 1
+        turn.save!
       end
     end
+  end
+
+  def create_turn_tracker
+    # TURN TRACKER CREATE
+    tracker = TurnTracker.new
+    tracker.game_id = teams&.first&.game_id
+    tracker.current_player_id = teams&.first&.team_players&.order(id: :asc)&.first&.id
+    tracker.next_player_id = teams&.second&.team_players&.order(id: :asc)&.first&.id
+    tracker.current_team_id = teams&.first&.id
+    tracker.next_team_id = teams&.second&.id
+    tracker.save!
   end
 end

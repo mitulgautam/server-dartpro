@@ -81,11 +81,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_04_170212) do
   create_table "turn_orders", force: :cascade do |t|
     t.bigint "game_id", null: false
     t.bigint "team_player_id", null: false
+    t.bigint "team_id", null: false
     t.integer "turn_order"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["game_id", "team_player_id", "turn_order"], name: "index_turn_orders_on_game_id_and_team_player_id_and_turn_order", unique: true
+    t.index ["game_id", "team_id", "turn_order"], name: "index_turn_orders_on_game_id_and_team_id_and_turn_order", unique: true
     t.index ["game_id"], name: "index_turn_orders_on_game_id"
+    t.index ["team_id"], name: "index_turn_orders_on_team_id"
     t.index ["team_player_id"], name: "index_turn_orders_on_team_player_id"
   end
 
@@ -111,5 +113,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_04_170212) do
   add_foreign_key "teams", "games"
   add_foreign_key "turn_orders", "games"
   add_foreign_key "turn_orders", "team_players"
+  add_foreign_key "turn_orders", "teams"
   add_foreign_key "turn_trackers", "games"
 end

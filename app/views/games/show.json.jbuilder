@@ -8,3 +8,4 @@ json.teams @game.teams do |team|
   json.extract! team, :id, :name, :score, :is_winner
 end
 json.extract! @turn_tracker, :current_player_id, :current_team_id
+json.current_round_id TeamPlayer.find_by_id(@turn_tracker.current_player_id).current_round

@@ -100,7 +100,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_04_170212) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_turn_trackers_on_game_id"
-    t.index ["id", "game_id"], name: "index_turn_trackers_on_id_and_game_id", unique: true
+    t.index ["game_id"], name: "turn_trackers_un_game_id", unique: true
   end
 
   add_foreign_key "chances", "rounds"

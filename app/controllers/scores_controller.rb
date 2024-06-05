@@ -8,6 +8,7 @@ class ScoresController < ApplicationController
     score = params[:score][:score]
     team_player = TeamPlayer.find_by(id: team_player_id)
     game_id = team_player.team.game_id
+    game = Game.find_by_id(game_id)
 
     round = Round.find_or_initialize_by(team_player_id:, current_round: round_num)
     turn_tracker = TurnTracker.find_by(game_id:)
@@ -32,32 +33,39 @@ class ScoresController < ApplicationController
 
           turn_tracker.current_player_id = turn_tracker.next_player_id
           turn_tracker.current_team_id = turn_tracker.next_team_id
+          turn_order_track = turn_order.turn_order % team_player&.team&.team_players&.count
+
           turn_tracker.next_player_id =
             next_turn_order.order(id: :asc) # reset back to first player with mod
-                           .find_by(turn_order: ((turn_order.turn_order % team_player&.team&.team_players&.count) + 1))
+                           .find_by(turn_order: (turn_order_track + 1))
                            .team_player_id
           turn_tracker.next_team_id =
             next_turn_order.order(id: :asc) # reset back to first player with mod
-                           .find_by(turn_order: ((turn_order.turn_order % team_player&.team&.team_players&.count) + 1))
+                           .find_by(turn_order: (turn_order_track + 1))
                            .team_id
           turn_tracker.save!
         end
+        turn_tracker.reload
         render json: { message: 'Voilla, It\'s done!', data: {
           next_player_id: turn_tracker.current_player_id,
           next_team_id: turn_tracker.current_team_id,
-          game: team_player.team.game
+          teams: game.teams,
+          current_round: TeamPlayer.find_by_id(turn_tracker.current_player_id).current_round
         } }, status: :ok
       else
         render json: { message: round.errors.full_messages.to_sentence,
                        data: { next_player_id: turn_tracker.current_player_id,
-                               next_team_id: turn_tracker.current_team_id } },
+                               next_team_id: turn_tracker.current_team_id,
+                               teams: game.teams,
+                               current_round: team_player.current_round } },
                status: :unprocessable_entity
       end
     else
       render json: { message: 'All chances has been taken already!', data: {
         next_player_id: turn_tracker.current_player_id,
         next_team_id: turn_tracker.current_team_id,
-        game: team_player.team.game
+        teams: game.teams,
+        current_round: TeamPlayer.find_by_id(turn_tracker.current_player_id).current_round
       } }, status: :unprocessable_entity
     end
   end

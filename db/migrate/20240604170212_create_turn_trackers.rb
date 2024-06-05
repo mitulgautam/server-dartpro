@@ -9,6 +9,6 @@ class CreateTurnTrackers < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
-    add_index :turn_trackers, %i[id game_id], unique: true
+    add_index :turn_trackers, %i[game_id], unique: true, name: 'turn_trackers_un_game_id'
   end
 end
